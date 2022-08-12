@@ -4,7 +4,7 @@ import { BiSearchAlt2 } from "react-icons/bi";
 import { FaSearchLocation } from "react-icons/fa";
 import { jobTypeList, salaryList } from '../../../data';
 
-const Sidebar = ({ searchHandle, categoryHandle, jobTypeHandle, jobType, locationHandle }) => {
+const Sidebar = ({ searchHandle, categoryHandle, jobTypeHandle, jobType, locationHandle, cat }) => {
 
   return (
     <div className='space-y-5'>
@@ -48,7 +48,9 @@ const Sidebar = ({ searchHandle, categoryHandle, jobTypeHandle, jobType, locatio
           id='category'
           className='border py-1 rounded-lg pl-3 hover:border-primary duration-300 w-fit'
           onChange={categoryHandle}
+          value={cat}
         >
+          <option value="">Default</option>
           <option value="Web Development">Web Developer</option>
           <option value="Front End">Front End Dev</option>
           <option value="Backend Dev">Backend Dev</option>

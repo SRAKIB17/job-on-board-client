@@ -1,22 +1,32 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import useJob from '../../../Hooks/useJob';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { ImArrowLeft2 } from 'react-icons/im';
 import ApplicantModal from './ApplicantModal';
 import Footer from '../../../Shared/Footer/Footer';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import auth from '../../../Auth/Firebase/Firebase.init';
+import Loading from '../../../Components/Loading/Loading';
 
 const JobDescription = () => {
   const { jobId } = useParams()
   const [job, loading] = useJob(jobId);
   const navigate = useNavigate();
+  const [user, userLoading] = useAuthState(auth);
+  const location = useLocation();
 
-  // console.log(job)
-  // const {category,companyName,createdDate,employees,hrEmail,hrName,jobTitle,jobType,location,openingPosition,salary, value , _id} = job 
+  if (loading) {
+    return <Loading />;
+  }
 
+  const guestNavigate = () => {
+    navigate('/login?return=' + location.pathname)
+  }
   const back = () => {
     navigate(-1)
   }
+
 
   return (
     <div className=''>
@@ -27,7 +37,7 @@ const JobDescription = () => {
             <div className='flex flex-col lg:flex-row space-y-2 lg:space-y-1 justify-between'>
               <div className="flex lg:justify-center lg:items-center gap-2 pb-4 lg:pb-0">
                 <div onClick={back} className='flex justify-center items-center gap-x-2 cursor-pointer hover:text-primary'>
-                  <span className='font-extrabold text-xl'><ImArrowLeft2/></span>
+                  <span className='font-extrabold text-xl'><ImArrowLeft2 /></span>
                   <h2 className="text-xl md:text-xl font-bold ">{job?.jobTitle}</h2>
                 </div>
                 <h2 className='text-xl md:text-lg lg:text-xl font-mono md:mt-1 lg:mt-0  font-bold  hidden md:block'> | Vacancy : {job?.openingPosition}</h2>
@@ -42,9 +52,19 @@ const JobDescription = () => {
           <p className='text-white'>Salary  : ${job?.salary} <small>/ m</small></p>
           <div className='flex flex-col lg:flex-row justify-between lg:items-center space-y-3 lg:space-y-1'>
             <span className='lg:pt-4'>Work Type : {job?.jobType}</span>
-            <label
-              htmlFor="applicant-modal"
-              className='flex justify-center px-5 py-3 bg-primary duration-300 hover:bg-[#6f49c7] rounded-lg text-xl text-white cursor-pointer w-1/2 md:w-[10rem]' >Apply Now</label>
+            {
+              user ?
+                <label
+                  htmlFor="applicant-modal"
+                  className='flex justify-center px-5 py-3 bg-primary duration-300 hover:bg-[#6f49c7] rounded-lg text-xl text-white cursor-pointer w-1/2 md:w-[10rem]' >
+                  Apply Now
+                </label>
+                :
+                <label
+                  className='flex justify-center px-5 py-3 btn  bg-primary duration-300 hover:bg-[#6f49c7] rounded-lg text-xl text-white cursor-pointer w-1/2 md:w-[10rem]' onClick={guestNavigate}>
+                  Apply Now
+                </label>
+            }
           </div>
         </div>
       </div>
